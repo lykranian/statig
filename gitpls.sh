@@ -12,18 +12,16 @@ ORIGINALWD=`echo $PWD`
 NAME=$(basename $1 .git) # gets the repo name
 GDIR="/tmp/gitpls" # repo storage dir
 
-rm -rf $GDIR/pages/$NAME # removes previous pages dir if it exists
-mkdir -p $GDIR/pages/$NAME # re-create a blank folder
+mkdir -p $GDIR/ # create base repo folder if non-existant
+rm -rf $GDIR/$NAME # remove previous repo dir
 
-mkdir -p $GDIR/repos/ # create base repo folder if non-existant
-rm -rf $GDIR/repos/$NAME # remove previous repo dir
-
-cd $GDIR/repos
+cd $GDIR
 git clone $1 --quiet # clone the repo
-rm -rf $GDIR/repos/$NAME/.git # remove the .git folder
+rm -rf $GDIR/$NAME/.git # remove the .git folder
 
-find $GDIR/repos/$NAME/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
-
+find $GDIR/$NAME/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
+mkdir $GDIR/$NAME/files
+mv $GDIR/$NAME/* /$GDIR/$NAME/files/ 2>/dev/null
 # page colors
 LINKCOL="#444444"
 
@@ -54,18 +52,18 @@ printf "<!DOCTYPE HTML>
   </HEAD>
   <BODY>
     <center>
-      gitpls - $NAME<br/><br/>" >> $GDIR/pages/$NAME/index.html
+      gitpls - $NAME<br/><br/>" >> $GDIR/$NAME/index.html
 
 
-find $GDIR/repos/$NAME/ -type f|while read fullname; do
-				    # FNAME=$(basename $fullname .txt) # if your try_files equivalent has $uri.txt
-				    FNAME=$(echo $fullname | sed "s:$GDIR\/repos\/$NAME\/::")
-				    RNAME=$(echo $FNAME | sed "s:.txt$::")
-				    printf "\n      <a href=\"files/$FNAME\">$RNAME</a>" >> $GDIR/pages/$NAME/index.html
-				    printf "<br/>" >> $GDIR/pages/$NAME/index.html
-				done
+find $GDIR/$NAME/files -type f|while read fullname; do # populates html file with links
+				   # FNAME=$(basename $fullname .txt) # if your try_files equivalent has $uri.txt
+				   FNAME=$(echo $fullname | sed "s:$GDIR\/$NAME\/::")
+				   RNAMEPRE=$(echo $FNAME | sed "s:.txt$::")
+				   RNAME=$(echo $RNAMEPRE | sed "s:files\/::")
+				   printf "\n      <a href=\"$FNAME\">$RNAME</a>" >> $GDIR/$NAME/index.html
+				   printf "<br/>" >> $GDIR/$NAME/index.html
+			       done
 printf "\n  </BODY>
-</HTML>" >> $GDIR/pages/$NAME/index.html
-cp -R $GDIR/repos/$NAME $GDIR/pages/$NAME/files
+</HTML>" >> $GDIR/$NAME/index.html # end html output
 
-cd $ORIGINALWD
+cd $ORIGINALWD # not needed?
