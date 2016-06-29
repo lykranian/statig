@@ -26,7 +26,7 @@ mv $GDIR/$NAME/* /$GDIR/$NAME/files/ 2>/dev/null
 LINKCOL="#444444"
 
 # ↓ basic structure for writing to index
-# printf "hello world" >> $GDIR/pages/$NAME/index.html
+# printf "hello world" >> $GDIR/$NAME/index.html
 printf "<!DOCTYPE HTML>
 <HTML>
   <HEAD>

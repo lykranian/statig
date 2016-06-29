@@ -2,6 +2,8 @@
 
 a static page generator for hosting git repos
 
+##### this is a proof of concept written in bash
+
 #### usage
 `./gitpls.sh repo` where repo is a path or a link to a git repo
 
