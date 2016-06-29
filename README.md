@@ -5,7 +5,7 @@ a static page generator for hosting git repos
 ##### this is a proof of concept written in bash
 
 #### usage
-`./gitpls.sh repo` where repo is a path or a link to a git repo
+`./gitpls.sh repo branch` where repo is a path or a link to a git repo, and branch is the branch name, defaulting to master
 
 creates `/tmp/gitpls/REPONAME/` which can be copied to your webserver directory, or you can change the $GDIR to your web directory. it contains a file `index.html` and a directory `files`.
 

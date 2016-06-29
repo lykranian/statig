@@ -15,8 +15,16 @@ GDIR="/tmp/gitpls" # repo storage dir
 mkdir -p $GDIR/ # create base repo folder if non-existant
 rm -rf $GDIR/$NAME # remove previous repo dir
 
+BRANCH="master"
+if [ $2 ]; then
+  BRANCH=$2
+fi
+
 cd $GDIR
 git clone $1 --quiet # clone the repo
+cd $GDIR/$NAME
+git checkout $BRANCH --quiet
+cd $GDIR
 rm -rf $GDIR/$NAME/.git # remove the .git folder
 
 find $GDIR/$NAME/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
