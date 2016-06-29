@@ -7,32 +7,43 @@
 # a static page generator for git repos
 # hosted at https://rectilinear.xyz/git/lyk/gitpls
 
-VERSION="0.0.1"
+VERSION="0.1.0"
 ORIGINALWD=`echo $PWD`
 NAME=$(basename $1 .git) # gets the repo name
 GDIR="/tmp/gitpls" # repo storage dir
 
-rm -rf $GDIR/pages/$NAME
-mkdir -p $GDIR/pages/$NAME
+rm -rf $GDIR/pages/$NAME # removes previous pages dir if it exists
+mkdir -p $GDIR/pages/$NAME # re-create a blank folder
 
-mkdir -p $GDIR/repos/
-rm -rf $GDIR/repos/$NAME
+mkdir -p $GDIR/repos/ # create base repo folder if non-existant
+rm -rf $GDIR/repos/$NAME # remove previous repo dir
 
 cd $GDIR/repos
-git clone $1 --quiet 
-printf "cloned into $GDIR/repos/$NAME\n"
-rm -rf $GDIR/repos/$NAME/.git
+git clone $1 --quiet # clone the repo
+rm -rf $GDIR/repos/$NAME/.git # remove the .git folder
 
-find $GDIR/repos/$NAME/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \;
-#find $GDIR/repos/$NAME/ -type f -exec sh -c "printf `basename` >> ${GDIR%}/pages/${NAME%}/index.txt" {} \;
+find $GDIR/repos/$NAME/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
+
+# ↓ basic structure for writing to index
+# printf "hello world" >> $GDIR/pages/$NAME/index.html
+printf "<!DOCTYPE HTML>
+<HTML>
+  <HEAD>
+    <TITLE>gitpls - $NAME</TITLE>
+  </HEAD>
+  <BODY>
+    gitpls - $NAME<br/><br/>" >> $GDIR/pages/$NAME/index.html
+
+
 find $GDIR/repos/$NAME/ -type f|while read fullname; do
 				    # FNAME=$(basename $fullname .txt) # if your try_files equivalent has $uri.txt
 				    FNAME=$(echo $fullname | sed "s:$GDIR\/repos\/$NAME\/::")
 				    RNAME=$(echo $FNAME | sed "s:.txt$::")
-				    printf "<a href=\"files/$FNAME\">$RNAME</a>\n" >> $GDIR/pages/$NAME/index.html
+				    printf "\n  <a href=\"files/$FNAME\">$RNAME</a>" >> $GDIR/pages/$NAME/index.html
 				    printf "<br/>" >> $GDIR/pages/$NAME/index.html
 				done
-
+printf "  </BODY>
+</HTML>" >> $GDIR/pages/$NAME/index.html
 cp -R $GDIR/repos/$NAME $GDIR/pages/$NAME/files
 
 cd $ORIGINALWD
