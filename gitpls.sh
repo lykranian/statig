@@ -7,7 +7,7 @@
 # a static page generator for git repos
 # hosted at https://rectilinear.xyz/git/lyk/gitpls
 
-VERSION="0.1.0"
+VERSION="0.1.2"
 ORIGINALWD=`echo $PWD`
 NAME=$(basename $1 .git) # gets the repo name
 GDIR="/tmp/gitpls" # repo storage dir
