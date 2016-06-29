@@ -30,37 +30,27 @@ rm -rf $GDIR/$NAME/.git # remove the .git folder
 find $GDIR/$NAME/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
 mkdir $GDIR/$NAME/files
 mv $GDIR/$NAME/* /$GDIR/$NAME/files/ 2>/dev/null
+mv $GDIR/$NAME/.* /$GDIR/$NAME/files/ 2>/dev/null
 # page colors
 LINKCOL="#444444"
 
 # ↓ basic structure for writing to index
 # printf "hello world" >> $GDIR/$NAME/index.html
 printf "<!DOCTYPE HTML>
-<HTML>
-  <HEAD>
-    <TITLE>gitpls - $NAME</TITLE>
-  <STYLE>
-    body {
-      background-color: #DDDDDD;
-      font-color: #333333;
-    }
-    a:link {
-      color: $LINKCOL;
-    }
-    a:visited {
-      color: $LINKCOL;
-    }
-    a:hover {
-      color: $LINKCOL;
-    }
-    a:active {
-      color: $LINKCOL;
-    }
-  </STYLE>
-  </HEAD>
-  <BODY>
-    <center>
-      gitpls - $NAME<br/><br/>" >> $GDIR/$NAME/index.html
+<html>
+  <head>
+    <title>gitpls - $NAME</title>
+  <style>
+    body { background-color:#DDDDDD; font-color:#333333; }
+    a:link { color: $LINKCOL; }
+    a:visited { color: $LINKCOL; }
+    a:hover { color: $LINKCOL; }
+    a:active { color: $LINKCOL; }
+  </style>
+  </head>
+  <body>
+
+    gitpls - $NAME<br/><br/>" >> $GDIR/$NAME/index.html
 
 
 find $GDIR/$NAME/files -type f|while read fullname; do # populates html file with links
@@ -68,7 +58,7 @@ find $GDIR/$NAME/files -type f|while read fullname; do # populates html file wit
 				   FNAME=$(echo $fullname | sed "s:$GDIR\/$NAME\/::")
 				   RNAMEPRE=$(echo $FNAME | sed "s:.txt$::")
 				   RNAME=$(echo $RNAMEPRE | sed "s:files\/::")
-				   printf "\n      <a href=\"$FNAME\">$RNAME</a>" >> $GDIR/$NAME/index.html
+				   printf "\n    <a href=\"$FNAME\">$RNAME</a>" >> $GDIR/$NAME/index.html
 				   printf "<br/>" >> $GDIR/$NAME/index.html
 			       done
 printf "\n  </BODY>
