@@ -12,7 +12,6 @@ creates `/tmp/gitpls/REPONAME/` which can be copied to your webserver directory,
 #### the aim is to provide:  
  - a single bash script for generating a directory of static html files for each file in a git repo
  - markdown support
- - syntax hilighting
  - easy-to-modify css theming
 
 ###### stay tuned
