@@ -110,7 +110,7 @@ find $GITDIR/$NAME/files -type f -name "index.html"|while read indexname; do # e
                                                         printf "\n  </body>
 </html>" >> $indexname
                                                     done
-printf "\n  </BODY>
-</HTML>" >> $GITDIR/$NAME/index.html
+printf "\n  </body>
+</html>" >> $GITDIR/$NAME/index.html
 
 cd $ORIGINALWD # not needed?
