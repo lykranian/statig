@@ -43,13 +43,13 @@ printf "<!DOCTYPE HTML>
 <html>
   <head>
     <title>gitpls - $NAME</title>
-  <style>
-    body { background-color:#BGCOL; font-color:#FGCOL; text-align:center;}
-    a:link { color: $LINKCOL; }
-    a:visited { color: $LINKCOL; }
-    a:hover { color: $LINKCOL; }
-    a:active { color: $LINKCOL; }
-  </style>
+    <style>
+      body { background-color:#BGCOL; font-color:#FGCOL; text-align:center;}
+      a:link { color: $LINKCOL; }
+      a:visited { color: $LINKCOL; }
+      a:hover { color: $LINKCOL; }
+      a:active { color: $LINKCOL; }
+    </style>
   </head>
   <body>
     gitpls - $NAME<br/><br/>" >> $GITDIR/$NAME/index.html
@@ -57,27 +57,27 @@ printf "<!DOCTYPE HTML>
 find $GITDIR/$NAME/files|while read fullname; do # populates html file with links
                            if [[ -d $fullname ]]; then
                                DIRNAME=$(echo $fullname | sed "s:$GITDIR\/$NAME\/::")
-			       CLEANDIRNAME=$(echo $DIRNAME | sed "s:files\/::")
-			       INDEXNAME=$(basename $DIRNAME)
-			       PARENTDIRNAME=$(dirname $CLEANDIRNAME)
-			       if [[ $fullname == $GITDIR/$NAME/files ]]; then
-				  continue # stops the creation of .../files/index.txt, in case one already exists in the repo
-			       fi
+                               CLEANDIRNAME=$(echo $DIRNAME | sed "s:files\/::")
+                               INDEXNAME=$(basename $DIRNAME)
+                               PARENTDIRNAME=$(dirname $CLEANDIRNAME)
+                               if [[ $fullname == $GITDIR/$NAME/files ]]; then
+                                  continue # stops the creation of .../files/index.txt, in case one already exists in the repo
+                               fi
 
-			       printf "<!DOCTYPE HTML>
-                                       <html>
-                                       <head>
-                                       <title>gitpls - $NAME</title>
-                                       <style>
-                                         body { background-color:#BGCOL; font-color:#FGCOL; text-align:center;}
-                                         a:link { color: $LINKCOL; }
-                                         a:visited { color: $LINKCOL; }
-                                         a:hover { color: $LINKCOL; }
-                                         a:active { color: $LINKCOL; }
-                                       </style>
-                                       </head>
-                                       <body>
-                                         gitpls - $NAME/$CLEANDIRNAME<br/><br/>" >> $GITDIR/$NAME/$DIRNAME/index.html
+                               printf "<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>gitpls - $NAME</title>
+    <style>
+      body { background-color:#BGCOL; font-color:#FGCOL; text-align:center;}
+      a:link { color: $LINKCOL; }
+      a:visited { color: $LINKCOL; }
+      a:hover { color: $LINKCOL; }
+      a:active { color: $LINKCOL; }
+    </style>
+  </head>
+  <body>
+    gitpls - $NAME/$CLEANDIRNAME<br/><br/>" >> $GITDIR/$NAME/$DIRNAME/index.html
 
                                                                 # ↓ remove this /index.html if your try_files has index.html
                                if [[ $PARENTDIRNAME == "." ]]; then
@@ -93,10 +93,10 @@ find $GITDIR/$NAME/files|while read fullname; do # populates html file with link
                                    FILENAME=$(echo $fullname | sed "s:$GITDIR\/$NAME\/::")
                                    LINKNAMEPRE=$(echo $FILENAME | sed "s:.txt$::")
                                    LINKNAME=$(echo $LINKNAMEPRE | sed "s:files\/::")
-				   CLEANLINKNAME=$(basename $LINKNAME)
-				   PARENTDIRNAME=$(dirname $LINKNAME)
-				   
-			       if [[ $PARENTDIRNAME == "." ]]; then
+                                   CLEANLINKNAME=$(basename $LINKNAME)
+                                   PARENTDIRNAME=$(dirname $LINKNAME)
+
+                               if [[ $PARENTDIRNAME == "." ]]; then
                                    printf "\n    <a href=\"$FILENAME\">$CLEANLINKNAME</a>" >> $GITDIR/$NAME/index.html
                                    printf "<br/>" >> $GITDIR/$NAME/index.html
                                else
@@ -104,8 +104,13 @@ find $GITDIR/$NAME/files|while read fullname; do # populates html file with link
                                    printf "<br/>" >> $GITDIR/$NAME/files/$PARENTDIRNAME/index.html
                                fi
                            fi
-                                 done
+                         done
+
+find $GITDIR/$NAME/files -type f -name "index.html"|while read indexname; do # end html files
+                                                        printf "\n  </body>
+</html>" >> $indexname
+                                                    done
 printf "\n  </BODY>
-</HTML>" >> $GITDIR/$NAME/index.html # end html output
+</HTML>" >> $GITDIR/$NAME/index.html
 
 cd $ORIGINALWD # not needed?
