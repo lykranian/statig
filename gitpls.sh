@@ -34,8 +34,8 @@ mv $GITDIR/$NAME/* /$GITDIR/$NAME/files/ 2>/dev/null
 mv $GITDIR/$NAME/.* /$GITDIR/$NAME/files/ 2>/dev/null
 # page colors
 LINKCOL="#444444"
-BGCOL="DDDDDD"
-FGCOL="333333"
+BGCOL="#DDDDDD"
+FGCOL="#333333"
 
 # ↓ basic structure for writing to index
 # printf "hello world" >> $GITDIR/$NAME/index.html
@@ -44,7 +44,7 @@ printf "<!DOCTYPE HTML>
   <head>
     <title>gitpls - $NAME</title>
     <style>
-      body { background-color:#BGCOL; font-color:#FGCOL; text-align:center;}
+      body { background-color:$BGCOL; font-color:$FGCOL; text-align:center;}
       a:link { color: $LINKCOL; }
       a:visited { color: $LINKCOL; }
       a:hover { color: $LINKCOL; }
@@ -69,7 +69,7 @@ find $GITDIR/$NAME/files|while read fullname; do # populates html file with link
   <head>
     <title>gitpls - $NAME</title>
     <style>
-      body { background-color:#BGCOL; font-color:#FGCOL; text-align:center;}
+      body { background-color:$BGCOL; font-color:$FGCOL; text-align:center;}
       a:link { color: $LINKCOL; }
       a:visited { color: $LINKCOL; }
       a:hover { color: $LINKCOL; }
