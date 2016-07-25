@@ -3,6 +3,7 @@
 a static page generator for hosting git repos
 
 ##### this is a proof of concept written in bash
+<a href="https://rectilinear.xyz/gitpls/sshuttle/">sample output</a>
 
 #### usage
 `./gitpls.sh repo branch` where repo is a path or a link to a git repo, and branch is the branch name, defaulting to master
