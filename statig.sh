@@ -98,6 +98,7 @@ css="<style>
         background-color:$bgcol;
         margin-left: -5px;
         margin-right: -5px;
+        padding: 5px;
       }
 
       .filebox {
@@ -105,6 +106,7 @@ css="<style>
         border:2px solid $bordercol;
         text-align: left;
         display: inline-block;
+        max-width: 90vw;
         margin-left: auto ;
         margin-right: auto ;
         padding: 5px;
