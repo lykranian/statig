@@ -36,8 +36,9 @@ git clean -xdf # applies .gitignore as double safety (not required after a clean
 rm -rf $target/$name/.git # remove the .git folder
 cd $target/
 
-#sed -i -- 's/\n/\n\n/g' $target/$name/{readme,README}.{md,MD}
-readme=$(markdown $target/$name/{readme,README}.{md,MD})
+#sed -i -- 's/\n\n/\n/g' $target/$name/{readme,README}.{md,MD}
+#readme=$(markdown $target/$name/{readme,README}.{md,MD})
+readme=$(pandoc -f markdown $target/$name/README.md)
 
 find $target/$name/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
 mkdir $target/$name/files
@@ -92,6 +93,13 @@ css="<style>
       a:visited { color: $linkcol; }
       a:hover { color: $linkcol; }
       a:active { color: $linkcol; }
+
+      pre {
+        background-color:$bgcol;
+        margin-left: -5px;
+        margin-right: -5px;
+      }
+
       .filebox {
         background-color: $bgcol2;
         border:2px solid $bordercol;
@@ -175,7 +183,11 @@ find $target/$name/files -type f -name "index.html"|while read indexname; do # e
 </html>" >> $indexname
                                                     done
 printf "\n    </div>
-  $readme
+  <br/><br/>
+  <div class=\"filebox\">
+    $readme
+  </div>
+  <br/><br/>
   </body>
 </html>" >> $target/$name/index.html
 
