@@ -72,7 +72,7 @@ css="<style>
         color:$fgcol;
         font-family: \"Droid Sans\", \"Lucida Sans Unicode\", \"Lucida Grande\", sans-serif;
         text-align:center;
-        font-size: 1.15em;
+        font-size: 14px;
       }
       ::-webkit-scrollbar {
         width: 10px;
