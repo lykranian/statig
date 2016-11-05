@@ -36,20 +36,26 @@ rm -rf $target/$name/.git # remove the .git folder
 cd $target/
 
 # generates html readme
-readmefile=$(ls $target/$name/ | while read readmefiles ;do grep -i '^readme$\|^readme.txt$' ;done)
+readmefile=$(ls $target/$name/ | grep -i '^readme$\|^readme.txt$')
 if [ $readmefile ]; then
     readme=$(< $target/$name/$readmefile)
     readme=${readme//&/&amp;}
     readme=${readme//</&lt;}
     readme=${readme//>/&gt;}
-    readme="<pre class=\"readme\">
-$readme
-    </pre>"
+    readme="<div class=\"box\">
+    <pre class=\"readme\">
+      $readme
+    </pre>
+  </div>"
+
 fi
 if ! [ $readmefile ]; then
-    readmefile=$(ls $target/$name/ | while read readmefiles ;do grep -i readme ;done)
+    readmefile=$(ls $target/$name/ | grep -i readme)
     if [ $readmefile ]; then
 	readme=$(pandoc -f markdown $target/$name/$readmefile)
+	readme="<div class=\"box\">
+    $readme
+  </div>"
     fi
 fi
 
@@ -201,9 +207,7 @@ find $target/$name/files -type f -name "index.html"|while read indexname; do # e
                                                     done
 printf "\n    </div>
   <br/><br/>
-  <div class=\"box\">
-    $readme
-  </div>
+  $readme
   <br/><br/>
   </body>
 </html>" >> $target/$name/index.html
