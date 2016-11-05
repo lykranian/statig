@@ -11,8 +11,6 @@ version="0.1.4"
 
 # options:
 target="/tmp/statig" # script delivers to $target/$name/
-webtarget="/tmp/statig" # where on webhost generated dir will go
-                         # https://example.com/repos/"reponame"
 theme="dark" # dark or light, more to be added
 #end options
 
