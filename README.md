@@ -1,6 +1,8 @@
 # statig
 a static page generator for hosting git repos.
 
+see <a href="https://rectilinear.xyz/statig/">sample</a>.
+
 #### usage
 `./statig.sh repo branch` where `repo` is a path or a link to a git repo. `branch` is optional, it defaults to master.
 
