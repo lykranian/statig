@@ -14,11 +14,10 @@ target="/tmp/statig" # script delivers to $target/$name/
 webtarget="/tmp/statig" # where on webhost generated dir will go
                          # https://example.com/repos/"reponame"
 theme="dark" # dark or light, more to be added
-
+#end options
 
 ORIGINALWD=`echo $PWD`
 name=$(basename $1 .git) # gets the repo name
-
 
 mkdir -p $target/ # create base repo folder if non-existant
 rm -rf $target/$name # remove previous repo dir
@@ -36,9 +35,9 @@ git clean -xdf # applies .gitignore as double safety (not required after a clean
 rm -rf $target/$name/.git # remove the .git folder
 cd $target/
 
-#sed -i -- 's/\n\n/\n/g' $target/$name/{readme,README}.{md,MD}
-#readme=$(markdown $target/$name/{readme,README}.{md,MD})
-readme=$(pandoc -f markdown $target/$name/README.md)
+# generates html readme
+readmefile=$(ls $target/$name/ | while read readmefiles ;do grep -i readme ;done)
+readme=$(pandoc -f markdown $target/$name/$readmefile)
 
 find $target/$name/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
 mkdir $target/$name/files
@@ -72,7 +71,7 @@ css="<style>
         color:$fgcol;
         font-family: \"Droid Sans\", \"Lucida Sans Unicode\", \"Lucida Grande\", sans-serif;
         text-align:center;
-        font-size: 14px;
+        font-size: 1em;
       }
       ::-webkit-scrollbar {
         width: 10px;
@@ -133,16 +132,16 @@ printf "<!DOCTYPE HTML>
     <div class=\"filebox\">" >> $target/$name/index.html
 
 find $target/$name/files|while read fullname; do # populates html file with links
-			     if [[ -d $fullname ]]; then
-				 dirname=$(echo $fullname | sed "s:$target\/$name\/::")
-				 cleandirname=$(echo $dirname | sed "s:files\/::")
-				 indexname=$(basename $dirname)
-				 parentdirname=$(dirname $cleandirname)
-				 if [[ $fullname == $target/$name/files ]]; then
-				     continue # stops the creation of .../files/index.txt, in case one already exists in the repo
-				 fi           # i don't think it's needed anymore?
+                             if [[ -d $fullname ]]; then
+                                 dirname=$(echo $fullname | sed "s:$target\/$name\/::")
+                                 cleandirname=$(echo $dirname | sed "s:files\/::")
+                                 indexname=$(basename $dirname)
+                                 parentdirname=$(dirname $cleandirname)
+                                 if [[ $fullname == $target/$name/files ]]; then
+                                     continue # stops the creation of .../files/index.txt, in case one already exists in the repo
+                                 fi           # i don't think it's needed anymore?
 
-				 printf "<!DOCTYPE HTML>
+                                 printf "<!DOCTYPE HTML>
 <html>
   <head>
     <title>statig - $name</title>
@@ -153,30 +152,30 @@ find $target/$name/files|while read fullname; do # populates html file with link
     <h1>$name/$cleandirname</h1>
     <div class=\"filebox\">" >> $target/$name/$dirname/index.html
 
-				 if [[ $parentdirname == "." ]]; then # ↓ remove this /index.html if try_files has index.html
-				     printf "\n      <a href=\"$dirname/index.html\">$cleandirname/</a>" >> $target/$name/index.html
-				     printf "<br/>" >> $target/$name/index.html # prints subdirs to main index file
-				 else
-				     printf "\n      <a href=\"$indexname/index.html\">$indexname/</a>" >> $target/$name/files/$parentdirname/index.html
-				     printf "<br/>" >> $target/$name/files/$parentdirname/index.html # prints (n)subdir to (n-1)subdir index files
-				 fi
-			     else [[ -f $fullname ]];
+                                 if [[ $parentdirname == "." ]]; then # ↓ remove this /index.html if try_files has index.html
+                                     printf "\n      <a href=\"$dirname/index.html\">$cleandirname/</a>" >> $target/$name/index.html
+                                     printf "<br/>" >> $target/$name/index.html # prints subdirs to main index file
+                                 else
+                                     printf "\n      <a href=\"$indexname/index.html\">$indexname/</a>" >> $target/$name/files/$parentdirname/index.html
+                                     printf "<br/>" >> $target/$name/files/$parentdirname/index.html # prints (n)subdir to (n-1)subdir index files
+                                 fi
+                             else [[ -f $fullname ]];
 
-				  # fullname=$(basename $fullname .txt) # uncomment if your try_files equivalent has $uri.txt
-				  filename=$(echo $fullname | sed "s:$target\/$name\/::")
-				  linknamepre=$(echo $filename | sed "s:.txt$::")
-				  linkname=$(echo $linknamepre | sed "s:files\/::")
-				  cleanlinkname=$(basename $linkname)
-				  parentdirname=$(dirname $linkname)
+                                  # fullname=$(basename $fullname .txt) # uncomment if your try_files equivalent has $uri.txt
+                                  filename=$(echo $fullname | sed "s:$target\/$name\/::")
+                                  linknamepre=$(echo $filename | sed "s:.txt$::")
+                                  linkname=$(echo $linknamepre | sed "s:files\/::")
+                                  cleanlinkname=$(basename $linkname)
+                                  parentdirname=$(dirname $linkname)
 
-				  if [[ $parentdirname == "." ]]; then
-				      printf "\n      <a href=\"$filename\">$cleanlinkname</a>" >> $target/$name/index.html
-				      printf "<br/>" >> $target/$name/index.html # prints root dir file links
-				  else
-				      printf "\n      <a href=\"$cleanlinkname.txt\">$cleanlinkname</a>" >> $target/$name/files/$parentdirname/index.html
-				      printf "<br/>" >> $target/$name/files/$parentdirname/index.html # prints subdir file links
-				  fi
-			     fi
+                                  if [[ $parentdirname == "." ]]; then
+                                      printf "\n      <a href=\"$filename\">$cleanlinkname</a>" >> $target/$name/index.html
+                                      printf "<br/>" >> $target/$name/index.html # prints root dir file links
+                                  else
+                                      printf "\n      <a href=\"$cleanlinkname.txt\">$cleanlinkname</a>" >> $target/$name/files/$parentdirname/index.html
+                                      printf "<br/>" >> $target/$name/files/$parentdirname/index.html # prints subdir file links
+                                  fi
+                             fi
                          done
 
 find $target/$name/files -type f -name "index.html"|while read indexname; do # end html files
