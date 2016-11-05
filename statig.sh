@@ -7,7 +7,7 @@
 # a static page generator for git repos
 # hosted at https://rectilinear.xyz/git/lyk/statig
 
-version="0.1.3"
+version="0.1.4"
 
 # options:
 target="/tmp/statig" # script delivers to $target/$name/
@@ -36,8 +36,22 @@ rm -rf $target/$name/.git # remove the .git folder
 cd $target/
 
 # generates html readme
-readmefile=$(ls $target/$name/ | while read readmefiles ;do grep -i readme ;done)
-readme=$(pandoc -f markdown $target/$name/$readmefile)
+readmefile=$(ls $target/$name/ | while read readmefiles ;do grep -i '^readme$\|^readme.txt$' ;done)
+if [ $readmefile ]; then
+    readme=$(< $target/$name/$readmefile)
+    readme=${readme//&/&amp;}
+    readme=${readme//</&lt;}
+    readme=${readme//>/&gt;}
+    readme="<pre class=\"readme\">
+$readme
+    </pre>"
+fi
+if ! [ $readmefile ]; then
+    readmefile=$(ls $target/$name/ | while read readmefiles ;do grep -i readme ;done)
+    if [ $readmefile ]; then
+	readme=$(pandoc -f markdown $target/$name/$readmefile)
+    fi
+fi
 
 find $target/$name/ -type f -exec sh -c 'mv "$0" "${0%}.txt"' {} \; # add .txt suffix to all files
 mkdir $target/$name/files
@@ -93,14 +107,16 @@ css="<style>
       a:hover { color: $linkcol; }
       a:active { color: $linkcol; }
 
+      .readme {
+        background-color:$bgcol2;
+        border: none;
+      }
       pre {
         background-color:$bgcol;
-        margin-left: -5px;
-        margin-right: -5px;
         padding: 5px;
+        display: block;
       }
-
-      .filebox {
+      .box {
         background-color: $bgcol2;
         border:2px solid $bordercol;
         text-align: left;
@@ -129,7 +145,7 @@ printf "<!DOCTYPE HTML>
   </head>
   <body>
     <h1>$name</h1>
-    <div class=\"filebox\">" >> $target/$name/index.html
+    <div class=\"box\">" >> $target/$name/index.html
 
 find $target/$name/files|while read fullname; do # populates html file with links
                              if [[ -d $fullname ]]; then
@@ -150,7 +166,7 @@ find $target/$name/files|while read fullname; do # populates html file with link
   </head>
   <body>
     <h1>$name/$cleandirname</h1>
-    <div class=\"filebox\">" >> $target/$name/$dirname/index.html
+    <div class=\"box\">" >> $target/$name/$dirname/index.html
 
                                  if [[ $parentdirname == "." ]]; then # ↓ remove this /index.html if try_files has index.html
                                      printf "\n      <a href=\"$dirname/index.html\">$cleandirname/</a>" >> $target/$name/index.html
@@ -185,7 +201,7 @@ find $target/$name/files -type f -name "index.html"|while read indexname; do # e
                                                     done
 printf "\n    </div>
   <br/><br/>
-  <div class=\"filebox\">
+  <div class=\"box\">
     $readme
   </div>
   <br/><br/>
